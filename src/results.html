@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Premier Cricket League</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        /* Import same glass styles from index.html */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Accent colors */
+        .btn-accent {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+        }
+
+        .text-accent {
+            color: #dc2626;
+        }
+
+        /* Match result card styles */
+        .result-card {
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Stats card styles */
+        .stats-card {
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* Tab styles */
+        .tab {
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #dc2626;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(220, 38, 38, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo and Brand -->
+                <div class="flex-shrink-0 flex items-center">
+                    <img src="/src/assets/logo.png" alt="League Logo" class="h-16 w-auto">
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="/src/index.html" class="text-gray-900 hover:text-accent transition-colors">Home</a>
+                    <a href="/src/about.html" class="text-gray-900 hover:text-accent transition-colors">About</a>
+                    <a href="/src/teams.html" class="text-gray-900 hover:text-accent transition-colors">Teams</a>
+                    <a href="/src/fixtures.html" class="text-gray-900 hover:text-accent transition-colors">Fixtures</a>
+                    <a href="/src/results.html" class="text-gray-900 hover:text-accent transition-colors">Results</a>
+                    <a href="/src/gallery.html" class="text-gray-900 hover:text-accent transition-colors">Gallery</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-900 hover:text-accent transition-colors">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="pt-2 pb-4 space-y-1">
+                    <a href="/src/index.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">Home</a>
+                    <a href="/src/about.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">About</a>
+                    <a href="/src/teams.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">Teams</a>
+                    <a href="/src/fixtures.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">Fixtures</a>
+                    <a href="/src/results.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">Results</a>
+                    <a href="/src/gallery.html" class="block pl-3 pr-4 py-2 text-base font-medium text-gray-900 hover:text-accent transition-colors">Gallery</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-b from-gray-100 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold text-gray-900 mb-6">Match Results</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Complete match results, statistics, and highlights from the Premier Cricket League.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Overview -->
+    <section class="py-10 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="stats-card glass-card rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold text-accent mb-2">156</div>
+                    <div class="text-gray-600">Total Matches</div>
+                </div>
+                <div class="stats-card glass-card rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold text-accent mb-2">487</div>
+                    <div class="text-gray-600">Total Centuries</div>
+                </div>
+                <div class="stats-card glass-card rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold text-accent mb-2">892</div>
+                    <div class="text-gray-600">Total Wickets</div>
+                </div>
+                <div class="stats-card glass-card rounded-2xl p-6 text-center">
+                    <div class="text-4xl font-bold text-accent mb-2">26</div>
+                    <div class="text-gray-600">Hat-tricks</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Tabs and Content -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Tabs -->
+            <div class="flex space-x-4 mb-8">
+                <button class="tab active px-6 py-3 rounded-lg font-semibold">Latest Results</button>
+                <button class="tab px-6 py-3 rounded-lg font-semibold">Team Stats</button>
+                <button class="tab px-6 py-3 rounded-lg font-semibold">Player Stats</button>
+            </div>
+
+            <!-- Latest Results -->
+            <div class="space-y-6">
+                <!-- Result Card -->
+                <div class="result-card glass-card rounded-2xl p-6">
+                    <div class="grid md:grid-cols-3 gap-6 items-center">
+                        <div class="text-center">
+                            <img src="/src/assets/team-logos/indian-royals.png" alt="Indian Royals" class="w-20 h-20 mx-auto mb-2">
+                            <div class="font-semibold text-gray-900">Indian Royals</div>
+                            <div class="text-2xl font-bold text-accent">245/6</div>
+                            <div class="text-sm text-gray-600">(20 overs)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-500 mb-2">Quarter Final</div>
+                            <div class="text-xl font-bold text-accent mb-2">Indian Royals won by 31 runs</div>
+                            <div class="text-sm text-gray-600">March 10, 2024 • Mumbai</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="/src/assets/team-logos/srilankan-lions.png" alt="Srilankan Lions" class="w-20 h-20 mx-auto mb-2">
+                            <div class="font-semibold text-gray-900">Srilankan Lions</div>
+                            <div class="text-2xl font-bold text-gray-600">214/8</div>
+                            <div class="text-sm text-gray-600">(20 overs)</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">Top Performers - Indian Royals</div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Alex Johnson</span>
+                                    <span class="text-accent">87(52)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Mike Smith</span>
+                                    <span class="text-accent">3/28</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-600 mb-2">Top Performers - Srilankan Lions</div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Kumar Sangha</span>
+                                    <span class="text-accent">76(48)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Raj Patel</span>
+                                    <span class="text-accent">2/35</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button class="btn-accent px-6 py-2 rounded-lg text-sm">View Full Scorecard</button>
+                    </div>
+                </div>
+
+                <!-- Add more result cards here -->
+            </div>
+
+            <!-- Team Stats (Initially Hidden) -->
+            <div class="hidden">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Team Rankings -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6">Team Rankings</h3>
+                        <div id="teamRankingsChart"></div>
+                    </div>
+
+                    <!-- Win/Loss Ratio -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6">Win/Loss Ratio</h3>
+                        <div id="winLossChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Stats (Initially Hidden) -->
+            <div class="hidden">
+                <!-- Top Batsmen -->
+                <div class="glass-card rounded-2xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Top Batsmen</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left border-b border-gray-200">
+                                    <th class="pb-4">Player</th>
+                                    <th class="pb-4">Team</th>
+                                    <th class="pb-4">Runs</th>
+                                    <th class="pb-4">Average</th>
+                                    <th class="pb-4">Strike Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600">
+                                <!-- Add player stats rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Bowlers -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Top Bowlers</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left border-b border-gray-200">
+                                    <th class="pb-4">Player</th>
+                                    <th class="pb-4">Team</th>
+                                    <th class="pb-4">Wickets</th>
+                                    <th class="pb-4">Economy</th>
+                                    <th class="pb-4">Average</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600">
+                                <!-- Add player stats rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- About Section -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <img src="/src/assets/logo.png" alt="League Logo" class="h-10 w-10 mr-3 bg-white rounded-full p-1">
+                        <span class="text-2xl font-bold">Premier Cricket League</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">Asia's premier cricket tournament bringing together legendary players and creating unforgettable moments.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-accent transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/src/index.html" class="text-gray-400 hover:text-accent transition-colors">Home</a></li>
+                        <li><a href="/src/about.html" class="text-gray-400 hover:text-accent transition-colors">About</a></li>
+                        <li><a href="/src/teams.html" class="text-gray-400 hover:text-accent transition-colors">Teams</a></li>
+                        <li><a href="/src/fixtures.html" class="text-gray-400 hover:text-accent transition-colors">Fixtures</a></li>
+                        <li><a href="/src/results.html" class="text-gray-400 hover:text-accent transition-colors">Results</a></li>
+                        <li><a href="/src/gallery.html" class="text-gray-400 hover:text-accent transition-colors">Gallery</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                            </svg>
+                            <span>info@premiercricket.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                            </svg>
+                            <span>+1 234 567 890</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Cricket Stadium, Sports City<br>Mumbai, India</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Premier Cricket League. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.space-y-6, .hidden');
+
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Show corresponding content
+                contents.forEach(c => c.classList.add('hidden'));
+                contents[index].classList.remove('hidden');
+            });
+        });
+
+        // Initialize charts when team stats tab is clicked
+        tabs[1].addEventListener('click', () => {
+            // Team Rankings Chart
+            const teamRankings = new ApexCharts(document.querySelector("#teamRankingsChart"), {
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                series: [{
+                    name: 'Points',
+                    data: [12, 10, 8, 6, 4]
+                }],
+                xaxis: {
+                    categories: ['Indian Royals', 'Srilankan Lions', 'Bangladesh Tigers', 'Pakistan Stars', 'Afghanistan Pathans']
+                },
+                colors: ['#dc2626']
+            });
+            teamRankings.render();
+
+            // Win/Loss Ratio Chart
+            const winLoss = new ApexCharts(document.querySelector("#winLossChart"), {
+                chart: {
+                    type: 'donut',
+                    height: 350
+                },
+                series: [44, 55, 13],
+                labels: ['Wins', 'Losses', 'No Result'],
+                colors: ['#dc2626', '#gray-600', '#gray-400']
+            });
+            winLoss.render();
+        });
+
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+
+</html>
